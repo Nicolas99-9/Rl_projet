@@ -1,0 +1,24 @@
+Q learning
+Sarsa
+SARSA lambda
+
+ajouter du bruit ?
+discretisation decrite dans papier : qlearning, sarsa, sarsa lambda
+ajouter nouvelle feature : angle de la barre par rapport a cible
+nouvelle métrique
+discretisation 10 élements
+RBF sampler, gibbs, Dirichlet,PVF
+
+approximation : sgd, réseau de neurones
+
+
+TO DO LISTE ORDONNEE: 
+1) Nouvelle métrique ---------------------------------------------------------DONE
+3) Tester ajout bruit --------------------------------------------------------DONE
+4) Bien scale résultats entre -2,2 et -0.02:0.02 -----------------------------DONE
+5) RBF SAMPLER, PVF ----------------------------------------------------------DONE
+6) NOUVELLES 10 FEATURES -----------------------------------------------------DONE
+7) DISCRETISATION DU PAPIER
+8) SARSA ET SARSA LAMBDA classiques
+9) Utiliser idee de pybrain
+10) implementation de lpsi
