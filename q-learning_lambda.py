@@ -159,9 +159,9 @@ def get_arr(nb,size):
     tmp[nb] = 1.0
     return tmp
 
-def sarsa_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sarsa_normal=False, i = 1):
-    file_name = "res/"+str(metric_id) +"_"+str(greedy)+"_new_pi15.txt"
-    image_name = "res/"+str(metric_id) +"_"+str(greedy)+"_" + str(i)+"_pi15.png"
+def q_learning_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sarsa_normal=False, i = 1):
+    file_name = "res/"+str(metric_id) +"_"+str(greedy)+"_new.txt"
+    image_name = "res/"+str(metric_id) +"_"+str(greedy)+"_" + str(i)+".png"
 
     rewards_cumules = []
     global_stats = []
@@ -180,7 +180,6 @@ def sarsa_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sa
     #sauvegare des etats actions du passe
     learning_rate  = 0.5
     last_obs = None
-    last_action = None
     last_reward = 0.0
     tab = None
     expl_proportion = 0.5
@@ -216,7 +215,8 @@ def sarsa_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sa
                     copy_last_obs = deepcopy(last_obs)
                     copy_last_action = deepcopy(last_action)
                 last_obs = obs
-                last_action = get_action(np.dot(weights,obs),expl_proportion,greedy)
+                tmp_k = discrtisation_etats(env.getSensors()[:5])
+                last_action = get_action_greedy(np.dot(weights,tmp_k))
                 if copy_last_action != None:
                     future = np.dot(weights[last_action],obs)
                     paste = np.dot(weights[copy_last_action],copy_last_obs)
@@ -247,11 +247,6 @@ def sarsa_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sa
         if should_show:
             stats = (env.get_yfhist())
             print 'iteration : %i; cumreward: %.4f; nsteps: %i; learningRate: %.4f; max distance : %.4f' % (ep/50,reward_cuml, t, learning_rate, np.max(stats))
-            new_stats = [np.max(stats),np.mean(stats),np.median(stats),stats[-1], reward_cuml , t, learning_rate]
-            new_stats = [str(s) for s in new_stats]
-            with open(file_name, "a") as myfile:
-                myfile.write(" ".join(new_stats)+"\n")
-            global_stats.append(new_stats)
             print(env.sensors[6])
             if graphics:
                 ax1.cla()
@@ -259,25 +254,10 @@ def sarsa_lambda(env,graphics = False,nb_episodes=10,metric_id=1,greedy=False,sa
                 ax1.plot(rewards_cumules, '.--')
                 update_wheel_trajectories(ax2)
                 plt.pause(0.001)
-                if len(rewards_cumules)%50 ==0:
-                    plt.savefig(image_name +"_pi15.png")
-    plt.savefig(image_name+"_pi15.png")
     return global_stats
-total_stats = {}
-#sarsa_lambda(env,nb_episodes = 100, graphics=True,metric_id=3,greedy =False)
-nb_test = 1
-import pickle
-for g in [True]:
-    for nb in [5]:# [1,2,3,4,5]
-        cle = (g,nb)
-        tmp_stats = []
-        print("CLE : ", cle)
-        for i in range(nb_test):
-            print("Iteration !: ", i)
-            file_name = "res/"+str(nb) +"_"+str(g)+"_new_pi15.txt"
-            with open(file_name, "a") as myfile:
-                myfile.write("DEBUT ITERATION : " + str(i) + "\n")
-            tmp_stats.append(sarsa_lambda(env,nb_episodes = 20000, graphics=True,metric_id=nb,greedy =g, i = i))
+
+
+q_learning_lambda(env,nb_episodes = 20000, graphics=True,metric_id=1,greedy =True)
 
 '''print("Nombre d'etats : ",(len(angle_bar)-1)*(len(angular_vecolity)-1)*(len(angle_vertical)-1)* (len(angular_vecolity_d)-1)*(len(angular_accel)-1))
 indices_discretsation = []
